@@ -48,6 +48,7 @@
             display: flex;
             height: 40px;
             border-bottom: 1px solid #ddd;
+            position: relative;
         }
         .time-label {
             width: 10%;
@@ -60,6 +61,25 @@
         .task-block {
             width: 90%;
             border-left: 1px solid #ddd;
+            position: relative;
+        }
+        .task {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            border-left: 5px solid;
+            padding-left: 5px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .task.continued::before {
+            content: '';
+            padding-left: 5px;
         }
     </style>
 </head>
@@ -81,6 +101,17 @@
 
         let currentDate = new Date();
 
+        const plansByDate = {
+            '2024-08-31': [
+                { start: '10:30', end: '14:00', title: '개발', color: '#FFB6C1' },  // Light Pink
+                { start: '15:00', end: '16:30', title: '회의', color: '#87CEFA' }   // Light Sky Blue
+            ],
+            '2024-09-01': [
+                { start: '09:00', end: '11:00', title: '디자인', color: '#98FB98' }, // Pale Green
+                { start: '13:00', end: '14:30', title: '테스트', color: '#FFD700' } // Gold
+            ]
+        };
+
         function updateDate() {
             currentDateElement.textContent = currentDate.toISOString().split('T')[0];
         }
@@ -88,15 +119,13 @@
         function createPlanner() {
             plannerContainer.innerHTML = ''; // 초기화
 
-            for (let i = 0; i < 25; i++) {
-                if (i<24){
+            for (let i = 0; i < 24; i++) {
                 createTimeBlock(i, '00');
                 createTimeBlock(i, '30');
-                }
-                else{
-                    createTimeBlock(i,'00')
-                }
             }
+
+            const plans = plansByDate[currentDate.toISOString().split('T')[0]] || [];
+            addPlans(plans);
         }
 
         function createTimeBlock(hour, minute) {
@@ -113,6 +142,43 @@
             timeBlock.appendChild(timeLabel);
             timeBlock.appendChild(taskBlock);
             plannerContainer.appendChild(timeBlock);
+        }
+
+        function timeToMinutes(time) {
+            const [hour, minute] = time.split(':').map(Number);
+            return hour * 60 + minute;
+        }
+
+        function addPlans(plans) {
+            plans.forEach(plan => {
+                const startMinutes = timeToMinutes(plan.start);
+                const endMinutes = timeToMinutes(plan.end);
+
+                const startBlockIndex = Math.floor(startMinutes / 30);
+                const endBlockIndex = Math.floor((endMinutes - 1) / 30) + 2; // Correct endBlockIndex calculation
+
+                for (let i = startBlockIndex; i < endBlockIndex; i++) {
+                    const timeBlocks = plannerContainer.querySelectorAll('.time-block .task-block');
+                    const task = document.createElement('div');
+                    task.className = 'task';
+                    task.style.backgroundColor = plan.color;
+                    task.style.borderLeftColor = plan.color;
+
+                    if (i === startBlockIndex) {
+                        task.textContent = plan.title;
+                        task.style.top = `${(startMinutes % 30) * (100 / 30)}%`;
+                        task.style.height = `${Math.min(100, ((endMinutes - startMinutes) / 30) * 100)}%`;
+                    } else if (i === endBlockIndex - 1) {
+                        task.classList.add('continued');
+                        task.style.height = `${((endMinutes % 30) || 30) * (100 / 30)}%`; // Use full height if endMinutes is exactly on the hour
+                    } else {
+                        task.classList.add('continued');
+                        task.style.height = '100%';
+                    }
+
+                    timeBlocks[i].appendChild(task);
+                }
+            });
         }
 
         function changeDay(days) {
