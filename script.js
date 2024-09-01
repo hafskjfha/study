@@ -2,6 +2,7 @@ const monthYear = document.getElementById('monthYear');
 const datesContainer = document.getElementById('dates');
 const prevMonthButton = document.getElementById('prevMonth');
 const nextMonthButton = document.getElementById('nextMonth');
+const todayButton = document.getElementById('todayButton'); // 오늘 버튼 선택자 추가
 const addEventBtn = document.getElementById('addEventBtn');
 const eventModal = document.getElementById('eventModal');
 const closeModal = document.querySelector('.close');
@@ -10,15 +11,12 @@ const startDateInput = document.getElementById('startDate');
 const endDateInput = document.getElementById('endDate');
 const eventTitleInput = document.getElementById('eventTitle');
 
-let events = [
-    
-];
+let events = [];
 
-//{ startDate: new Date(2024, 8, 1), endDate: new Date(2024, 8, 2), title: "a", color: "red" },
-//{ startDate: new Date(2024, 8, 2), endDate: new Date(2024, 8, 3), title: "b", color: "blue" }
-
-let currentYear = 2024;
-let currentMonth = 8; // 8월 (0부터 시작하므로 7은 8월)
+// 현재 날짜 가져오기
+const today = new Date();
+let currentYear = today.getFullYear();
+let currentMonth = today.getMonth(); // 0부터 시작하므로 오늘의 월로 설정
 
 const renderCalendar = () => {
     const date = new Date(currentYear, currentMonth);
@@ -26,7 +24,7 @@ const renderCalendar = () => {
     const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
     const lastDateOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-    monthYear.textContent = `${monthName} ${currentYear}`;
+    monthYear.textContent = `${currentYear} ${monthName}`;
 
     datesContainer.innerHTML = '';
 
@@ -62,9 +60,7 @@ const renderCalendar = () => {
 
         // 현재 날짜에 해당하는 이벤트 필터링
         const currentEvents = events.filter(event => currentDate >= event.startDate && currentDate <= event.endDate);
-        //console.log(currentEvents)
         if (currentEvents.length > 0) {
-            // 각 일정에 대해 색상을 1/n로 나누어 셀을 채움
             currentEvents.forEach((event, index) => {
                 const eventOverlay = document.createElement('div');
                 eventOverlay.style.position = 'absolute';
@@ -73,19 +69,15 @@ const renderCalendar = () => {
                 eventOverlay.style.width = '100%';
                 eventOverlay.style.height = `${100 / currentEvents.length}%`;
                 eventOverlay.style.backgroundColor = event.color;
-                eventOverlay.style.opacity = '0.6'; // 색상을 연하게
-                eventOverlay.style.zIndex = '1'; // 날짜 텍스트 아래에 위치하도록 z-index 설정
+                eventOverlay.style.opacity = '0.6';
+                eventOverlay.style.zIndex = '1';
                 dateCell.appendChild(eventOverlay);
 
-                //  console.log(currentDate,event.startDate)
-                //console.log(currentDate.getTime(),event.startDate.getTime())
-                //console.log(currentDate.getDate() , event.startDate.getDate())
-                // 일정 이름은 시작일에만 표시
                 if (currentDate.getDate() === event.startDate.getDate()) {
                     const eventTitle = document.createElement('div');
                     eventTitle.classList.add('event-title');
                     eventTitle.style.position = 'absolute';
-                    eventTitle.style.zIndex = '2'; // 날짜 텍스트와 같은 레벨에 표시
+                    eventTitle.style.zIndex = '2';
                     eventTitle.style.top = `${(index * 100) / currentEvents.length}%`;
                     eventTitle.textContent = event.title;
                     dateCell.appendChild(eventTitle);
@@ -115,6 +107,13 @@ nextMonthButton.addEventListener('click', () => {
     renderCalendar();
 });
 
+// 오늘 버튼 클릭 시 현재 달로 이동
+todayButton.addEventListener('click', () => {
+    currentYear = today.getFullYear();
+    currentMonth = today.getMonth();
+    renderCalendar();
+});
+
 // + 버튼 클릭 시 모달 열기
 addEventBtn.addEventListener('click', () => {
     eventModal.style.display = 'block';
@@ -140,10 +139,8 @@ eventForm.addEventListener('submit', (e) => {
     const title = eventTitleInput.value;
     const color = `hsl(${Math.random() * 360}, 70%, 70%)`; // 랜덤 색상
 
-    console.log(startDate,endDate,title)
     // 일정 추가
     events.push({ startDate, endDate, title, color });
-    console.log(events)
 
     // 달력 다시 렌더링
     renderCalendar();
