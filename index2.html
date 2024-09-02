@@ -1,199 +1,302 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>플래너</title>
+    <title>Planner</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #2c3e50;
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .planner-header {
-            width: 100%;
-            padding: 10px 0;
-            background-color: #f0f0f0;
-            text-align: center;
-            display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 20px;
+            height: 100vh;
+            overflow: hidden;
         }
-        .arrow {
-            width: 40px;
-            height: 40px;
-            margin: 0 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 50%;
-            background-color: #d9d9d9;
-            cursor: pointer;
-            font-size: 24px;
-            line-height: 1;
-        }
-        .planner-container {
-            width: 80%;
-            max-width: 800px;
-            border: 1px solid #ccc;
-            display: flex;
-            flex-direction: column;
-        }
-        .time-block {
-            display: flex;
-            height: 40px;
-            border-bottom: 1px solid #ddd;
-            position: relative;
-        }
-        .time-label {
-            width: 10%;
-            min-width: 50px;
-            text-align: center;
-            line-height: 40px;
-            background-color: #f9f9f9;
-            border-right: 1px solid #ddd;
-        }
-        .task-block {
+
+        .planner {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
             width: 90%;
-            border-left: 1px solid #ddd;
-            position: relative;
+            max-width: 600px;
+            height: 80%;
+            overflow: auto;
         }
-        .task {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            border-left: 5px solid;
-            padding-left: 5px;
-            height: 100%;
+
+        .header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: flex-start;
-            font-size: 14px;
-            box-sizing: border-box;
+            margin-bottom: 20px;
         }
-        .task.continued::before {
-            content: '';
-            padding-left: 5px;
+
+        #current-date {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .content {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+        }
+
+        .list-section, .time-table-section {
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin: 0 0 10px 0;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 5px;
+            border-bottom: 1px solid #bdc3c7;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            border-radius: 8px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
-
-    <div class="planner-header">
-        <div class="arrow" id="prev-day">←</div>
-        <div id="current-date"></div>
-        <div class="arrow" id="next-day">→</div>
+    <div class="planner">
+        <div class="header">
+            <button id="prev-day">&lt;</button>
+            <div id="current-date">YYYY-MM-DD</div>
+            <button id="next-day">&gt;</button>
+            <button id="add-plan">+</button>
+        </div>
+        <div class="content">
+            <div class="list-section">
+                <h3>List</h3>
+                <ul id="list">
+                    <!-- List items can go here -->
+                </ul>
+            </div>
+            <div class="time-table-section">
+                <h3>Time Table</h3>
+                <table id="time-table">
+                    <!-- Time table rows will be inserted here by JS -->
+                </table>
+            </div>
+        </div>
     </div>
 
-    <div class="planner-container" id="planner-container"></div>
+    <!-- Modal -->
+    <div id="planModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Add Plan</h3>
+            <div class="form-group">
+                <label for="plan-title">Title</label>
+                <input type="text" id="plan-title">
+            </div>
+            <div class="form-group">
+                <label for="start-time">Start Time</label>
+                <input type="time" id="start-time">
+            </div>
+            <div class="form-group">
+                <label for="end-time">End Time</label>
+                <input type="time" id="end-time">
+            </div>
+            <button id="save-plan">Save</button>
+        </div>
+    </div>
 
     <script>
-        const plannerContainer = document.getElementById('planner-container');
-        const currentDateElement = document.getElementById('current-date');
-        const prevDayBtn = document.getElementById('prev-day');
-        const nextDayBtn = document.getElementById('next-day');
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentDateElem = document.getElementById('current-date');
+            const planModal = document.getElementById('planModal');
+            const addPlanBtn = document.getElementById('add-plan');
+            const closeModalBtn = document.getElementsByClassName('close')[0];
+            const savePlanBtn = document.getElementById('save-plan');
+            const timeTable = document.getElementById('time-table');
+            let currentDate = new Date();
 
-        let currentDate = new Date();
-
-        const plansByDate = {
-            '2024-08-31': [
-                { start: '10:30', end: '14:00', title: '개발', color: '#FFB6C1' },  // Light Pink
-                { start: '15:00', end: '16:30', title: '회의', color: '#87CEFA' }   // Light Sky Blue
-            ],
-            '2024-09-01': [
-                { start: '09:00', end: '11:00', title: '디자인', color: '#98FB98' }, // Pale Green
-                { start: '13:00', end: '14:30', title: '테스트', color: '#FFD700' } // Gold
-            ]
-        };
-
-        function updateDate() {
-            currentDateElement.textContent = currentDate.toISOString().split('T')[0];
-        }
-
-        function createPlanner() {
-            plannerContainer.innerHTML = ''; // 초기화
-
-            for (let i = 0; i < 24; i++) {
-                createTimeBlock(i, '00');
-                createTimeBlock(i, '30');
+            function updateDate() {
+                currentDateElem.textContent = currentDate.toISOString().split('T')[0];
             }
 
-            const plans = plansByDate[currentDate.toISOString().split('T')[0]] || [];
-            addPlans(plans);
-        }
+            document.getElementById('prev-day').addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() - 1);
+                updateDate();
+            });
 
-        function createTimeBlock(hour, minute) {
-            const timeBlock = document.createElement('div');
-            timeBlock.className = 'time-block';
+            document.getElementById('next-day').addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() + 1);
+                updateDate();
+            });
 
-            const timeLabel = document.createElement('div');
-            timeLabel.className = 'time-label';
-            timeLabel.textContent = `${hour.toString().padStart(2, '0')}:${minute}`;
+            updateDate();
 
-            const taskBlock = document.createElement('div');
-            taskBlock.className = 'task-block';
+            // Modal handling
+            addPlanBtn.addEventListener('click', function() {
+                planModal.style.display = 'flex';
+            });
 
-            timeBlock.appendChild(timeLabel);
-            timeBlock.appendChild(taskBlock);
-            plannerContainer.appendChild(timeBlock);
-        }
+            closeModalBtn.addEventListener('click', function() {
+                planModal.style.display = 'none';
+            });
 
-        function timeToMinutes(time) {
-            const [hour, minute] = time.split(':').map(Number);
-            return hour * 60 + minute;
-        }
-
-        function addPlans(plans) {
-            plans.forEach(plan => {
-                const startMinutes = timeToMinutes(plan.start);
-                const endMinutes = timeToMinutes(plan.end);
-
-                const startBlockIndex = Math.floor(startMinutes / 30);
-                const endBlockIndex = Math.floor((endMinutes - 1) / 30) + 2; // Correct endBlockIndex calculation
-
-                for (let i = startBlockIndex; i < endBlockIndex; i++) {
-                    const timeBlocks = plannerContainer.querySelectorAll('.time-block .task-block');
-                    const task = document.createElement('div');
-                    task.className = 'task';
-                    task.style.backgroundColor = plan.color;
-                    task.style.borderLeftColor = plan.color;
-
-                    if (i === startBlockIndex) {
-                        task.textContent = plan.title;
-                        task.style.top = `${(startMinutes % 30) * (100 / 30)}%`;
-                        task.style.height = `${Math.min(100, ((endMinutes - startMinutes) / 30) * 100)}%`;
-                    } else if (i === endBlockIndex - 1) {
-                        task.classList.add('continued');
-                        task.style.height = `${((endMinutes % 30) || 30) * (100 / 30)}%`; // Use full height if endMinutes is exactly on the hour
-                    } else {
-                        task.classList.add('continued');
-                        task.style.height = '100%';
-                    }
-
-                    timeBlocks[i].appendChild(task);
+            window.addEventListener('click', function(event) {
+                if (event.target == planModal) {
+                    planModal.style.display = 'none';
                 }
             });
-        }
 
-        function changeDay(days) {
-            currentDate.setDate(currentDate.getDate() + days);
-            updateDate();
-            createPlanner();
-        }
+            // Dynamically generate the timetable rows
+            const startTime = 0;  // Start at 00:00
+            const endTime = 23;   // End at 23:00
 
-        prevDayBtn.addEventListener('click', () => changeDay(-1));
-        nextDayBtn.addEventListener('click', () => changeDay(1));
+            const headerRow = document.createElement('tr');
+            const emptyHeader = document.createElement('th');
+            headerRow.appendChild(emptyHeader);
 
-        // 초기화
-        updateDate();
-        createPlanner();
+            for (let i = 10; i <= 50; i += 10) {
+                const th = document.createElement('th');
+                th.textContent = i;
+                headerRow.appendChild(th);
+            }
+            timeTable.appendChild(headerRow);
+
+            function addTimeRow(hour) {
+                const row = document.createElement('tr');
+                const hourCell = document.createElement('td');
+                hourCell.textContent = hour.toString().padStart(2, '0') + ":00";
+                row.appendChild(hourCell);
+
+                for (let i = 0; i < 5; i++) {
+                    const cell = document.createElement('td');
+                    cell.dataset.hour = hour; // Store hour in dataset
+                    row.appendChild(cell);
+                }
+
+                timeTable.appendChild(row);
+            }
+
+            for (let hour = startTime; hour <= endTime; hour++) {
+                addTimeRow(hour);
+            }
+
+            // Save plan and update timetable
+            savePlanBtn.addEventListener('click', function() {
+                const title = document.getElementById('plan-title').value;
+                const startTimeValue = document.getElementById('start-time').value;
+                const endTimeValue = document.getElementById('end-time').value;
+
+                if (title && startTimeValue && endTimeValue) {
+                    const startHour = parseInt(startTimeValue.split(':')[0]);
+                    const startMinute = parseInt(startTimeValue.split(':')[1]);
+                    const endHour = parseInt(endTimeValue.split(':')[0]);
+                    const endMinute = parseInt(endTimeValue.split(':')[1]);
+
+                    const rows = timeTable.getElementsByTagName('tr');
+
+                    // Calculate the start and end row index
+                    const startRow = startHour + 1;
+                    const endRow = endHour + 1;
+
+                    // Update cells between start and end time
+                    for (let i = startRow; i <= endRow; i++) {
+                        const row = rows[i];
+                        const cells = row.getElementsByTagName('td');
+
+                        for (let j = 1; j < cells.length; j++) {  // Skip the hour cell
+                            cells[j].style.backgroundColor = '#3498db';
+                            if (i === startRow) {
+                                cells[j].textContent = title;
+                            }
+                        }
+                    }
+
+                    planModal.style.display = 'none';
+                } else {
+                    alert("Please fill in all fields.");
+                }
+            });
+        });
     </script>
-
 </body>
 </html>
