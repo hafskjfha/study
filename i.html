@@ -215,6 +215,9 @@
         const currentDateElem = document.getElementById('current-date');
         const timeTable = document.getElementById('time-table');
         let currentDate = new Date();
+        const addPlanBtn = document.getElementById('add-plan');
+        const closeModalBtn = document.getElementsByClassName('close')[0];
+        const savePlanBtn = document.getElementById('save-plan');
 
         function updateDate() {
             currentDateElem.textContent = currentDate.toISOString().split('T')[0];
@@ -231,6 +234,20 @@
         });
 
         updateDate();
+
+        addPlanBtn.addEventListener('click', function() {
+                planModal.style.display = 'flex';
+            });
+
+        closeModalBtn.addEventListener('click', function() {
+                planModal.style.display = 'none';
+            });
+
+        window.addEventListener('click', function(event) {
+                if (event.target == planModal) {
+                    planModal.style.display = 'none';
+                }
+            });
 
         // Dynamically generate the timetable rows
         const startTime = 0;  // Start at 00:00
@@ -279,26 +296,101 @@
         // 1,2 셀과 1,3 셀을 강조하기 위해 박스 생성
         const rect11 = cellPositions[0][1];
         const rect12 = cellPositions[0][2];
+        
+        // const boxLeft = Math.min(rect11.left, rect12.left);
+        // const boxTop = Math.min(rect11.top, rect12.top);
+        // const boxRight = Math.max(rect11.right, rect12.right);
+        // const boxBottom = Math.max(rect11.bottom, rect12.bottom);
+        // const boxWidth = boxRight - boxLeft;
+        // const boxHeight = boxBottom - boxTop;
 
-        const boxLeft = Math.min(rect11.left, rect12.left);
-        const boxTop = Math.min(rect11.top, rect12.top);
-        const boxRight = Math.max(rect11.right, rect12.right);
-        const boxBottom = Math.max(rect11.bottom, rect12.bottom);
-        const boxWidth = boxRight - boxLeft;
-        const boxHeight = boxBottom - boxTop;
+        // // 파란색 박스를 생성
+        // const highlightBox = document.createElement('div');
+        // highlightBox.className = 'highlight-box';
+        // highlightBox.style.width = `${boxWidth}px`;
+        // highlightBox.style.height = `${boxHeight}px`;
+        // highlightBox.style.left = `${boxLeft - tablePosition.left}px`;
+        // highlightBox.style.top = `${boxTop - tablePosition.top}px`;
+        // highlightBox.style.position = 'absolute';
 
-        // 파란색 박스를 생성
-        const highlightBox = document.createElement('div');
-        highlightBox.className = 'highlight-box';
-        highlightBox.style.width = `${boxWidth}px`;
-        highlightBox.style.height = `${boxHeight}px`;
-        highlightBox.style.left = `${boxLeft - tablePosition.left}px`;
-        highlightBox.style.top = `${boxTop - tablePosition.top}px`;
-        highlightBox.style.position = 'absolute';
+        // // 테이블에 박스를 추가
+        // document.querySelector('.time-table-wrapper').appendChild(highlightBox);
 
-        // 테이블에 박스를 추가
-        document.querySelector('.time-table-wrapper').appendChild(highlightBox);
+        savePlanBtn.addEventListener('click', function() {
+                const title = document.getElementById('plan-title').value;
+                const startTimeValue = document.getElementById('start-time').value;
+                const endTimeValue = document.getElementById('end-time').value;
+
+                if (title && startTimeValue && endTimeValue) {
+                    const startHour = parseInt(startTimeValue.split(':')[0]);
+                    const startMinute = parseInt(startTimeValue.split(':')[1]);
+                    const endHour = parseInt(endTimeValue.split(':')[0]);
+                    const endMinute = parseInt(endTimeValue.split(':')[1]);
+
+                    
+                    console.log(startHour,startMinute,endHour,endMinute);
+
+
+                    for (let i=startHour;i<=endHour;i++){
+                        //console.log(i)
+                        if (i===startHour){
+                            if (startHour===endHour){
+                                plus_box(startHour,startMinute,endMinute);
+                            }
+                            else{
+                                plus_box(i,startMinute,60);
+                            }
+                        }
+                        else if (i===endHour){
+                            plus_box(i,0,endMinute);
+                        }
+                        else{
+                            plus_box(i,0,60);
+                        }
+                    }
+
+                    
+
+                    
+                    planModal.style.display = 'none';
+                } else {
+                    alert("Please fill in all fields.");
+                }
+            });
+
+            
+        function plus_box(ii,xx,yy){
+                    console.log(ii,xx,yy)
+                    const kk= xx%10 !==0 ? xx%10 : 10
+                    const zz= yy%10 !==0 ? yy%10 : 10
+                    const rect11 = cellPositions[ii][Math.floor(xx/10)+1];
+                    const rect12 = cellPositions[ii][Math.floor(yy/10)];
+                    const boxLeft = Math.min(rect11.left, rect12.left);
+                    const boxTop = Math.min(rect11.top, rect12.top);
+                    const boxRight = Math.max(rect11.right, rect12.right);
+                    const boxBottom = Math.max(rect11.bottom, rect12.bottom);
+                    const boxWidth = (boxRight - boxLeft);
+                    const boxHeight = boxBottom - boxTop;
+
+                    // 파란색 박스를 생성
+                    const highlightBox = document.createElement('div');
+                    highlightBox.className = 'highlight-box';
+                    highlightBox.style.width = `${boxWidth}px`;
+                    highlightBox.style.height = `${boxHeight}px`;
+                    highlightBox.style.left = `${boxLeft - tablePosition.left}px`;
+                    highlightBox.style.top = `${boxTop - tablePosition.top}px`;
+                    highlightBox.style.position = 'absolute';
+
+                    // 테이블에 박스를 추가
+                    document.querySelector('.time-table-wrapper').appendChild(highlightBox);
+        };
     });
+
+
+
+    
+
+    
     </script>
 </body>
 </html>
