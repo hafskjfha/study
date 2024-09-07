@@ -219,9 +219,13 @@
         const closeModalBtn = document.getElementsByClassName('close')[0];
         const savePlanBtn = document.getElementById('save-plan');
 
+        const print=(...obj)=>{
+            return console.log(...obj);
+        };
+
         function updateDate() {
             currentDateElem.textContent = currentDate.toISOString().split('T')[0];
-        }
+        };
 
         document.getElementById('prev-day').addEventListener('click', function() {
             currentDate.setDate(currentDate.getDate() - 1);
@@ -360,19 +364,29 @@
 
             
         function plus_box(ii,xx,yy){
-                    console.log(ii,xx,yy)
-                    const kk= xx%10 !==0 ? xx%10 : 10
-                    const zz= yy%10 !==0 ? yy%10 : 10
+                    console.log(ii,xx,yy);
+                    const kk= xx%10 !==0 ? xx%10 : 10;
+                    const zz= yy%10 !==0 ? yy%10 : 10;
                     const rect11 = cellPositions[ii][Math.floor(xx/10)+1];
                     const rect12 = cellPositions[ii][Math.floor(yy/10)];
-                    const boxLeft = Math.min(rect11.left, rect12.left);
+                    const rect13 = cellPositions[ii][Math.floor(yy/10)];
+                    const rect14 = cellPositions[ii][Math.floor(xx/10)];
+                    const plusright= Math.abs(rect13.right-rect13.left)*(zz/10);
+                    
+                    const lefta = rect14.left;
+                    const pulsleft = (rect11.left)*(kk/10);
+                    
+                    
+                    const boxLeft = pulsleft+lefta-rect14.right;
+                    print(lefta,pulsleft,boxLeft);
+                    //const boxLeft = Math.min(rect11.left, rect12.left);
                     const boxTop = Math.min(rect11.top, rect12.top);
                     const boxRight = Math.max(rect11.right, rect12.right);
                     const boxBottom = Math.max(rect11.bottom, rect12.bottom);
-                    const boxWidth = (boxRight - boxLeft);
+                    const boxWidth = (boxRight - boxLeft + plusright);
                     const boxHeight = boxBottom - boxTop;
 
-                    // 파란색 박스를 생성
+                    
                     const highlightBox = document.createElement('div');
                     highlightBox.className = 'highlight-box';
                     highlightBox.style.width = `${boxWidth}px`;
@@ -381,7 +395,7 @@
                     highlightBox.style.top = `${boxTop - tablePosition.top}px`;
                     highlightBox.style.position = 'absolute';
 
-                    // 테이블에 박스를 추가
+                    
                     document.querySelector('.time-table-wrapper').appendChild(highlightBox);
         };
     });
