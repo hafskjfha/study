@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: your_username
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: your_database
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    mem_limit: 512M # 메모리 제한
+    cpus: "0.3"    # CPU 30% 제한
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com # pgAdmin 로그인 이메일
+      PGADMIN_DEFAULT_PASSWORD: admin_password # pgAdmin 로그인 비밀번호
+    ports:
+      - "8080:80" # 호스트의 8080번 포트에서 pgAdmin 웹 UI 접근 가능
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:
