@@ -7,6 +7,8 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+    mem_limit: 512M # 메모리 제한
+    cpus: "0.3"    # CPU 30% 제한
     restart: always
     command: redis-server --bind 0.0.0.0 --protected-mode no --requirepass your_password
 
