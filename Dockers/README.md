@@ -10,6 +10,10 @@
 ```
 docker ps
 ```
+### 컨테이너들 상태 확인(전체)
+```
+docker ps -a
+```
 ### 컨테이너들 사용중인 리소스 확인
 ```
 docker stats
@@ -33,4 +37,8 @@ docker-compose down
 ### 도커컴포즈 컨테이너 중지 + 네트워크,볼륨 삭제
 ```
 docker-compose down -v
+```
+### 도커 컨테이너 접속해서 명령어 실행
+```
+docker exec -it <container_name_or_id> <command>
 ```
