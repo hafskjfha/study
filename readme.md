@@ -1,7 +1,8 @@
 # 개발 테스트
 
-https://github.com/HolymolyAstatine/Douda 기능 추가전 테스트 하는 곳
+개발공부를 하여 코드를 저장하는 곳
 
 ## 파일 설명
 
 - test_login -> 로그인 페이지 테스트 개발
+- Dockers -> 도커를 공부한것을 넣어둠
