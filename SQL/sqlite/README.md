@@ -40,8 +40,11 @@ LEFT JOIN
     word_topics wt ON w.id = wt.word_id
 LEFT JOIN 
     topics t ON wt.topic_id = t.id
+WHERE 
+    w.word = 'apple' -- 특정 단어 지정
 GROUP BY 
     w.id, w.word, w.first_letter, w.last_letter, w.initial;
+
 ```
 
 ---
