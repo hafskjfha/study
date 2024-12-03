@@ -47,11 +47,7 @@ GROUP BY
 ```
 ## topics 테이블에 데이터 삽입
 ```sql
-INSERT INTO topics (name) VALUES 
-    ('Science'), 
-    ('Literature'), 
-    ('Technology'), 
-    ('Art');
+INSERT INTO topics (name, code) VALUES ('Topic1', 'CODE1'), ('Topic2', 'CODE2');
 ```
 ## words 테이블에 데이터 삽입
 ```sql
