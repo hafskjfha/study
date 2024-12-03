@@ -62,9 +62,8 @@ VALUES
 ```sql
 INSERT INTO word_topics (word_id, topic_id)
 VALUES 
-    ((SELECT id FROM words WHERE word = 'apple'), (SELECT id FROM topics WHERE name = 'Science')),
-    ((SELECT id FROM words WHERE word = 'apple'), (SELECT id FROM topics WHERE name = 'Art')),
-    ((SELECT id FROM words WHERE word = 'banana'), (SELECT id FROM topics WHERE name = 'Literature'));
+    ((SELECT id FROM words WHERE word = 'apple'), (SELECT id FROM topics WHERE code = '10'));
+    
 ```
 ## 여러 주제를 한 단어에 삽입
 ```sql
@@ -79,20 +78,20 @@ VALUES
 ```sql
 INSERT INTO word_topics (word_id, topic_id)
 VALUES 
-    ((SELECT id FROM words WHERE word = 'apple'), (SELECT id FROM topics WHERE name = 'Technology'));
+    ((SELECT id FROM words WHERE word = 'apple'), (SELECT id FROM topics WHERE code = 'Technology'));
 ```
 ## 한 단어의 주제를 수정
 ### 기존 주제 삭제
 ```sql
 DELETE FROM word_topics
 WHERE word_id = (SELECT id FROM words WHERE word = 'apple')
-  AND topic_id = (SELECT id FROM topics WHERE name = 'Science');
+  AND topic_id = (SELECT id FROM topics WHERE code = 'Science');
 ```
 ### 새로운 주제 삽입
 ```sql
 INSERT INTO word_topics (word_id, topic_id)
 VALUES 
-    ((SELECT id FROM words WHERE word = 'apple'), (SELECT id FROM topics WHERE name = 'Art'));
+    ((SELECT id FROM words WHERE word = 'apple'), (SELECT id FROM topics WHERE code = 'Art'));
 ```
 ## 한 단어의 특정 주제 삭제
 ```sql
