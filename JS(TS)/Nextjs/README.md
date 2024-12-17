@@ -17,7 +17,7 @@ ts템플릿으로 시작.
 3. src/ 폴더에서 코드를 시작할거임? <br>
 4. app라우터 쓸거임? <br>
 5. turbopack쓸거임? <br>
-6. imprt alias(../../을 바꾸는것)을 커스텀화 할거임? (기본 @/* ex)@/lib/lib.ts)임.
+6. imprt alias(../../을 바꾸는것)을 커스텀화 할거임? (기본 @/* ex)@/lib/lib.ts)임.<br>
 알아서 선택.
 ## 프로젝트 구조 (Turbopack/App Router 사용)
 ```
@@ -59,8 +59,8 @@ export default function HelloPage() {
   }
 ```
 ### page 중요사항
-react훅, next훅등은 코드 최상단에 "use client"를 작성해야함.
+react훅, next훅등을 사용하려면 코드 최상단에 "use client"를 작성해야함.
 ```tsx
-"use client"
+"use client";
 import {useState} from "react";
 ```
