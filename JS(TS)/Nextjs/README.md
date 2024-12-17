@@ -24,8 +24,10 @@ ts템플릿으로 시작.
 project/
 ├── app/                # Turbopack 기반 라우팅 페이지
 │   ├── api
-│        ├── hello
-│               ├── route.ts
+│         ├── hello
+│               ├── route.ts # /api/hello로 접속했을때 처리하는 라우터
+│   ├── hello
+│          ├── page.tsx # /hello로 접속했을때 로드되는 페이지 
 │   ├── layout.tsx      # 공통 레이아웃 파일
 │   ├── page.tsx        # 홈 페이지
 └── public/             # 정적 파일
