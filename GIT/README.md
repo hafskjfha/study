@@ -21,3 +21,25 @@ git reset --soft HEAD~1
 ```
 git push --force
 ```
+## 실수로 다른브랜치에 커밋했을때
+### 커밋한 브랜치에서
+```
+git reset --soft HEAD~1
+```
+```
+git stash
+```
+### 이동
+```
+git checkout <target-branch>
+```
+```
+git stash pop
+```
+```
+git commit -m "옮긴 커밋 메시지"
+```
+### 커밋흔적 삭제
+```
+git push origin <original-branch> --force
+```
