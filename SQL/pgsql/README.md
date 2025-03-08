@@ -1,4 +1,34 @@
 # pgsql 쿼리문 공부한거 저장
+
+## 특정 테이블을 업데이트 했을때 업데이트 되게 하는 트리거 함수
+```plpgsql
+CREATE OR REPLACE FUNCTION update_last_modified()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.last_update (table_name, last_modified)
+  VALUES (TG_TABLE_NAME, now() AT TIME ZONE 'utc')
+  ON CONFLICT (table_name) DO UPDATE 
+  SET last_modified = EXCLUDED.last_modified;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+```
+### last_update
+```sql
+create table public.last_update (
+  table_name text not null,
+  last_modified timestamp with time zone not null default (now() AT TIME ZONE 'utc'::text)
+) TABLESPACE pg_default;
+```
+
+### 트리거 적용
+```sql
+CREATE TRIGGER trigger_update_last_modified -- 트리거 명
+AFTER INSERT OR UPDATE OR DELETE ON public.your_table -- 테이블 명
+FOR EACH ROW
+EXECUTE FUNCTION update_last_modified();
+```
+
 ## word 테이블 생성
 ```sql
 CREATE TABLE
@@ -120,3 +150,4 @@ WHERE
 GROUP BY 
     w.word;
 ```
+
