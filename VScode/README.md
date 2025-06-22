@@ -112,3 +112,6 @@
 
 - **코드 정렬**:
   - `Shift+Alt+F` (Windows)
+
+- **터미널 열기**:
+  - `Ctrl + j` (Windows)
