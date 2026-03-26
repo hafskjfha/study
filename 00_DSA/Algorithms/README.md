@@ -2,7 +2,7 @@ Algorithms
 
 하위 카테고리:
 
-- Math: GCD, Modulo, 확률 등
+- Math: [GCD](./gcd/readme.md), 확률 등
 - Search: Binary Search, BFS/DFS
 - Optimization: DP, Sliding Window, Greedy
 - Sorting: 정렬 알고리즘 모음
