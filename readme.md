@@ -9,4 +9,4 @@
 - [05_Database](05_Database/README.md) - 데이터베이스 (Postgres, SQLite, Redis)
 - [06_DevOps](06_DevOps/README.md) - DevOps 및 Docker
 
-원본/기존 자료는 워크스페이스 내에 남겨두었고, 각 README에서 관련 위치로 링크합니다.
+
